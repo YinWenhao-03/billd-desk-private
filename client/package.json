@@ -1,6 +1,6 @@
 {
   "name": "billd-desk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/galaxy-s10/billd-desk"
@@ -17,7 +17,7 @@
     "build:mac": "standard-version && vite build && electron-builder --mac",
     "build:mw": "standard-version && vite build && electron-builder --mac --win",
     "build:prod": "cross-env VITE_APP_RELEASE_PROJECT_ISWEB=true vite build",
-    "build:win": "standard-version && vite build && electron-builder --win",
+    "build:win": "vite build && electron-builder --win --publish never",
     "copy": "ts-node ./deploy/handleGiteeJenkins.mjs",
     "cz": "cz",
     "deploy:beta": "node ./deploy/index.cjs --beta",
@@ -30,7 +30,7 @@
     "release": "standard-version",
     "build:web": "cross-env VITE_APP_RELEASE_PROJECT_ISWEB=true vite build",
     "build:desktop": "vite build",
-    "package:win": "vite build && electron-builder --win"
+    "package:win": "vite build && electron-builder --win --publish never"
   },
   "config": {
     "commitizen": {
