@@ -1,0 +1,21 @@
+name: Verify deployment
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 setup.py --host localhost
+      - run: docker compose up -d --build
+      - run: python3 deployment/smoke.py
+      - if: always()
+        run: docker compose ps
+      - if: always()
+        run: docker compose down -v

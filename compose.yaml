@@ -1,0 +1,73 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?Run setup.py first}
+      MYSQL_USER: ${MYSQL_USER:?Run setup.py first}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Run setup.py first}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run setup.py first}
+    command: --default-authentication-plugin=mysql_native_password --innodb-buffer-pool-size=128M
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, 'mysqladmin ping -h 127.0.0.1 --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 40
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  server:
+    build: ./server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NODE_APP_RELEASE_PROJECT_NAME: billd-desk-server
+      NODE_APP_RELEASE_PROJECT_ENV: prod
+      NODE_APP_RELEASE_PROJECT_PORT: 4300
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET:?Run setup.py first}
+      DEVICE_ENCRYPTION_KEY: ${DEVICE_ENCRYPTION_KEY:?Run setup.py first}
+      TURN_SHARED_SECRET: ${TURN_SHARED_SECRET:?Run setup.py first}
+      TURN_URL: ${TURN_URL:?Run setup.py first}
+      CORS_ORIGINS: ${PUBLIC_ORIGIN}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:4300/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+  web:
+    build:
+      context: .
+      dockerfile: deployment/web.Dockerfile
+    restart: unless-stopped
+    ports:
+      - '${HTTP_PORT:-8080}:80'
+    depends_on:
+      server:
+        condition: service_healthy
+  turn:
+    image: coturn/coturn:4.6.3
+    restart: unless-stopped
+    network_mode: host
+    command: ['-c', '/etc/turnserver.conf']
+    volumes:
+      - ./deployment/generated/turnserver.conf:/etc/turnserver.conf:ro
+volumes:
+  mysql-data:

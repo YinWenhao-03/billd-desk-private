@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/electron-dist
+**/electron-release
+.git
+.env
+.env.*
+deployment/generated
+**/*.log
+**/*.exe
+**/*.zip
+**/*.asar
+**/*.backup-*
