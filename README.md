@@ -16,6 +16,7 @@
 ## 快速部署（Linux 服务器）
 
 需要 Docker Engine + Compose v2、Python 3、可用的公网 IPv4。先下载本仓库并进入目录。
+可在 GitHub 页面点 **Code → Download ZIP**，解压后运行下列命令。
 
 ```sh
 # YOUR_PUBLIC_IP 替换为你的服务器公网 IP，不要保留这个占位符。
@@ -87,3 +88,9 @@ RTT 是网络往返时间，不等于鼠标操作到画面反馈的端到端延�
 
 后端构建用 TypeScript 转译器检查语法并输出 CommonJS，不代表通过上游全量类型检查。
 原作者协议、桌面控制和依赖部分保留；新功能和部署集成属于本版改动。
+
+## 已验证项目
+
+GitHub Actions 在全新 Linux 环境构建并启动 Docker Compose，完成注册、正确/错误密码验证、
+设备保存与删除、不同设备的列表隔离、加密密码往返、临时 TURN 凭据签发及 Socket.IO 握手检查。
+这不等同于验证公网 TURN 媒体转发或特定硬件下的帧率；跨网画面与性能仍需在实际设备上测试。
