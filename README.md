@@ -55,7 +55,8 @@ MySQL、Redis 和后端不暴露主机端口。TURN 使用 Linux 主机网络；
 点击确定后自动重载，注册并显示设备代码和密码；网页主控填写被控设备代码与密码即可连接。
 “文件 → 登录 Windows 后自动启动”为当前登录用户的启动项，不支持登录前的 Windows 服务模式。
 
-仓库 Actions 的 **Build Windows client** 可以手动运行，下载生成的安装包；也可本地打包：
+发布安装包在仓库的 **Releases** 页面下载；仓库 Actions 的 **Build Windows client** 也可手动运行。
+安装后需要填写自己的服务器地址，无需自行编译。也可本地打包：
 
 ```sh
 cd client
