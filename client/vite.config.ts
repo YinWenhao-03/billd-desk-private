@@ -1,7 +1,6 @@
 import path from 'path';
 
 import vue from '@vitejs/plugin-vue';
-import { BilldHtmlWebpackPlugin, logData } from 'billd-html-webpack-plugin';
 import autoImport from 'unplugin-auto-import/vite';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import unpluginVueComponents from 'unplugin-vue-components/vite';
@@ -87,11 +86,10 @@ export default defineConfig(({ mode }) => {
         // eslint-disable-next-line
         resolvers: [NaiveUiResolver()],
       }),
-      new BilldHtmlWebpackPlugin({ env: 'vite4' }).config,
     ],
     define: {
       'process.env': {
-        BilldHtmlWebpackPlugin: logData(null),
+        BilldHtmlWebpackPlugin: { pkgName: pkg.name, pkgVersion: pkg.version, lastBuildDate: new Date().toISOString() },
         NODE_ENV: JSON.stringify(isProduction ? 'production' : 'development'),
         PUBLIC_PATH: outputStaticUrl(),
         VUE_APP_RELEASE_PROJECT_NAME: JSON.stringify(
